@@ -1,0 +1,31 @@
+.stApp {
+    background-color: #f5f7fa;
+}
+
+h1 {
+    text-align: center;
+    color: #1565c0;
+}
+
+.stButton > button {
+    width: 100%;
+    background-color: #1565c0;
+    color: white;
+    border-radius: 8px;
+    height: 50px;
+    font-size: 18px;
+    border: none;
+}
+
+.stButton > button:hover {
+    background-color: #0d47a1;
+    color: white;
+}
+
+div[data-testid="stNumberInput"] {
+    margin-bottom: 10px;
+}
+
+div[data-testid="stSelectbox"] {
+    margin-bottom: 10px;
+}
