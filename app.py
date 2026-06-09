@@ -1,79 +1,109 @@
 import streamlit as st
 import pandas as pd
-import joblib
+
+from src.regression_utils import (
+    load_data,
+    load_model
+)
+
+st.set_page_config(
+    page_title="Diamond Price Prediction",
+    layout="wide"
+)
+
+st.title("💎 Diamond Price Prediction using AdaBoost Regressor")
+
+st.write(
+    "Enter the diamond specifications and click Predict."
+)
 
 # Load model
-model = joblib.load("models/adaboost_model.pkl")
+model = load_model()
 
-# Page Config
-st.set_page_config(
-    page_title="Tip Prediction App",
-    page_icon="💰",
-    layout="centered"
-)
+# Load dataset for dropdown values
+df = load_data()
 
-# Load CSS
-with open("style.css") as f:
-    st.markdown(
-        f"<style>{f.read()}</style>",
-        unsafe_allow_html=True
+st.subheader("Diamond Features")
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    carat = st.number_input(
+        "Carat",
+        min_value=0.1,
+        max_value=5.0,
+        value=1.0
     )
 
-st.title("💰 Restaurant Tip Prediction")
-st.write("Predict the expected tip using AdaBoost Regressor")
+    cut = st.selectbox(
+        "Cut",
+        sorted(df["cut"].unique())
+    )
 
-st.markdown("---")
+    color = st.selectbox(
+        "Color",
+        sorted(df["color"].unique())
+    )
 
-# User Inputs
+    clarity = st.selectbox(
+        "Clarity",
+        sorted(df["clarity"].unique())
+    )
 
-total_bill = st.number_input(
-    "Total Bill Amount",
-    min_value=0.0,
-    value=20.0
-)
+with col2:
 
-sex = st.selectbox(
-    "Gender",
-    ["Male", "Female"]
-)
+    depth = st.number_input(
+        "Depth",
+        min_value=40.0,
+        max_value=80.0,
+        value=61.5
+    )
 
-smoker = st.selectbox(
-    "Smoker",
-    ["Yes", "No"]
-)
+    table = st.number_input(
+        "Table",
+        min_value=40.0,
+        max_value=100.0,
+        value=57.0
+    )
 
-day = st.selectbox(
-    "Day",
-    ["Thur", "Fri", "Sat", "Sun"]
-)
+    x = st.number_input(
+        "Length (x)",
+        min_value=0.0,
+        max_value=15.0,
+        value=5.5
+    )
 
-time = st.selectbox(
-    "Time",
-    ["Lunch", "Dinner"]
-)
+    y = st.number_input(
+        "Width (y)",
+        min_value=0.0,
+        max_value=15.0,
+        value=5.5
+    )
 
-size = st.slider(
-    "Party Size",
-    min_value=1,
-    max_value=10,
-    value=2
-)
+    z = st.number_input(
+        "Depth (z)",
+        min_value=0.0,
+        max_value=15.0,
+        value=3.5
+    )
 
-st.markdown("---")
-
-if st.button("Predict Tip"):
+if st.button("Predict Price"):
 
     input_data = pd.DataFrame({
-        "total_bill": [total_bill],
-        "sex": [sex],
-        "smoker": [smoker],
-        "day": [day],
-        "time": [time],
-        "size": [size]
+        "carat": [carat],
+        "cut": [cut],
+        "color": [color],
+        "clarity": [clarity],
+        "depth": [depth],
+        "table": [table],
+        "x": [x],
+        "y": [y],
+        "z": [z]
     })
 
     prediction = model.predict(input_data)[0]
 
     st.success(
-        f"Predicted Tip Amount: ${prediction:.2f}"
+        f"Predicted Diamond Price: ${prediction:,.2f}"
     )
