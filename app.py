@@ -3,7 +3,7 @@ import pandas as pd
 
 from src.regression_utils import (
     load_data,
-    load_model
+    train_model
 )
 
 st.set_page_config(
@@ -14,16 +14,20 @@ st.set_page_config(
 st.title("💎 Diamond Price Prediction using AdaBoost Regressor")
 
 st.write(
-    "Enter the diamond specifications and click Predict."
+    "Enter the diamond characteristics and predict its price."
 )
 
-# Load model
-model = load_model()
-
-# Load dataset for dropdown values
+# Load Dataset
 df = load_data()
 
-st.subheader("Diamond Features")
+# Train Model Once
+@st.cache_resource
+def get_model():
+    return train_model()
+
+model = get_model()
+
+st.subheader("Diamond Specifications")
 
 col1, col2 = st.columns(2)
 
@@ -90,7 +94,7 @@ with col2:
 
 if st.button("Predict Price"):
 
-    input_data = pd.DataFrame({
+    input_df = pd.DataFrame({
         "carat": [carat],
         "cut": [cut],
         "color": [color],
@@ -102,8 +106,14 @@ if st.button("Predict Price"):
         "z": [z]
     })
 
-    prediction = model.predict(input_data)[0]
+    prediction = model.predict(input_df)[0]
 
     st.success(
         f"Predicted Diamond Price: ${prediction:,.2f}"
     )
+
+st.markdown("---")
+
+st.subheader("Dataset Preview")
+
+st.dataframe(df.head())
